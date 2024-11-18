@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-deployment-nginx
+  namespace: test-masterclass
+data:
+  EXAMPLE_DATA: "example configmap data"

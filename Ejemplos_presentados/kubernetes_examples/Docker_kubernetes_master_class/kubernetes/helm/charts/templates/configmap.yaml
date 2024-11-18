@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.app.name }}-{{ .Values.app.suffix }}
+data:
+  HASURA_GRAPHQL_JWT_SECRET: '{ "type": "RS256", "jwk_url": "{{ .Values.HASURA_GRAPHQL_JWT_SECRET_URL}}", "claims_namespace": "claims"}'
+  {{- range $key, $value := .Values.configMapValues }}
+  {{ $key }}: "{{ $value }}"
+  {{- end }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: example-cikume-masterclass
+description: A Helm chart for Kubernetes to deploy Hasura GraphQL engine
+type: application
+version: 0.1.0
+appVersion: "v2.38.1"  # You can change this to the desired Hasura version

@@ -1,0 +1,68 @@
+services:
+  hasura-masterclass:
+    image: hasura/graphql-engine:v2.44.0
+    ports:
+      - "8082:8080"
+    environment:
+      HASURA_GRAPHQL_ADMIN_SECRET: "lol"
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
+      HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: "graphql-default"
+      HASURA_GRAPHQL_LOG_LEVEL: "debug"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: "http-log"
+      HASURA_GRAPHQL_PG_CONNECTIONS: "500"
+      HASURA_GRAPHQL_CORS_DOMAIN: "*"
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
+      # HASURA_GRAPHQL_DATABASE_URL: "postgres://hasurastaffingusertest:ZsqajOS5QRUhy1EucmRXUDJqCyGZSGhPFDI0@elecate-dev-postgresql.postgres.database.azure.com:5432/staffing_db_test?sslmode=require"
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres-hasura-masterclass:5432/test_masterclass
+      # HASURA_GRAPHQL_JWT_SECRET_URL: "https://auth.test.elecate.net/realms/elecate-staffingapp/protocol/openid-connect/certs"
+      
+    depends_on:
+      - "postgres-hasura-masterclass"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/v1/version1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  postgres-hasura-masterclass:
+    image: postgres:16.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: test_masterclass
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./migraciones/initial_migration.sql:/docker-entrypoint-initdb.d/initial_migration.sql
+      # - ./mograciones/initial_migration.sql:/docker-entrypoint-initdb.d/initial_migration.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  todo-masterclass:
+    image: hikohitokiri/todo_masterclass:v1
+    restart: unless-stopped
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8080"
+    depends_on:
+      - postgres-hasura-masterclass
+      - hasura-masterclass
+    environment:
+      HASURA_GRAPHQL_ADMIN_SECRET: lol
+      HASURA_GRAPHQL_URL: http://hasura-masterclass:8080/v1/graphql
+    # volumes:
+    #   - ./frontend:/app
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5

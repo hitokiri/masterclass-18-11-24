@@ -1,0 +1,11 @@
+services:
+  frontend-multy-satage-masterclass:
+    image: hikohitokiri/multistage_example_masterclass:v1
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # volumes:
+    #   - .:/app
+    ports:
+      - "3000:80"
+    restart: unless-stopped

@@ -1,0 +1,57 @@
+# Guides: https://www.masterclass.org/guides#server
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: masterclass
+spec:
+  selector: {}
+  serviceName: "masterclass"
+  replicas: 3
+  template:
+    metadata:
+      labels: {}
+    spec:
+      serviceAccountName: masterclass
+      containers:
+      - name: masterclass
+        image: quay.io/masterclass/masterclass:latest
+        # args: ["start", "--verbose", "--optimized"]
+        args: ["start", "--verbose"]
+        envFrom:
+        - configMapRef:
+            name: configuration-parameters
+        - secretRef:
+            name: masterclass-database-credentials
+        - secretRef:
+            name: masterclass-admin-credentials
+            optional: true
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: jgroups
+          containerPort: 7800
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        readinessProbe:
+          httpGet:
+            path: /realms/master
+            port: 8080
+      # tolerations:
+      #   - key: CriticalAddonsOnly
+      #     operator: Exists
+      #     effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux

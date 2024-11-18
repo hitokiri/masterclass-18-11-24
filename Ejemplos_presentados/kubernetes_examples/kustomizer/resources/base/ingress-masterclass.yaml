@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # Ingress controller
+    # Ref: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+    # Configure sticky session. masterclass is configured in cluster mode, but sticky sessions at ingress level avoid
+    # a lot of useless queries between nodes, improving the performance
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/session-cookie-name: INGRESS_ROUTE
+    nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
+
+    # Cert Manager
+    cert-manager.io/cluster-issuer: ck-clusterissuer-letsencrypt-cikume
+
+    # ExternalDNS
+    # Ref: https://pkg.go.dev/time#ParseDuration
+  name: masterclass
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: &host auth.cikume.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: masterclass
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - *host
+      secretName: cikume-masterclass-tls

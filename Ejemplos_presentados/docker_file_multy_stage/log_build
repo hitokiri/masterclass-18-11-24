@@ -1,0 +1,95 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile.dev
+#1 transferring dockerfile: 319B done
+#1 DONE 0.0s
+
+#2 [auth] library/nginx:pull token for registry-1.docker.io
+#2 DONE 0.0s
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/node:14
+#4 ...
+
+#5 [internal] load metadata for docker.io/library/nginx:alpine
+#5 DONE 0.8s
+
+#4 [internal] load metadata for docker.io/library/node:14
+#4 DONE 0.8s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 52B done
+#6 DONE 0.0s
+
+#7 [build 1/6] FROM docker.io/library/node:14@sha256:a158d3b9b4e3fa813fa6c8c590b8f0a860e015ad4e59bbce5744d2f6fd8461aa
+#7 DONE 0.0s
+
+#8 [stage-1 1/2] FROM docker.io/library/nginx:alpine@sha256:110fd73d932a737a359d26c233085ff648dc09e1a99bb65d9032d5fd0c2dce11
+#8 CACHED
+
+#9 [internal] load build context
+#9 transferring context: 501.14kB done
+#9 DONE 0.0s
+
+#10 [build 2/6] WORKDIR /app
+#10 CACHED
+
+#11 [build 3/6] COPY package*.json ./
+#11 CACHED
+
+#12 [build 4/6] RUN npm install --frozen-lockfile
+#12 CACHED
+
+#13 [build 5/6] COPY . .
+#13 DONE 0.0s
+
+#14 [build 6/6] RUN npm run build
+#14 0.317 
+#14 0.317 > docker_file_multy_stage@1.0.0 build /app
+#14 0.317 > react-scripts build
+#14 0.317 
+#14 1.211 Creating an optimized production build...
+#14 4.352 [0;33mOne of your dependencies, babel-preset-react-app, is importing the
+#14 4.352 "@babel/plugin-proposal-private-property-in-object" package without
+#14 4.352 declaring it in its dependencies. This is currently working because
+#14 4.352 "@babel/plugin-proposal-private-property-in-object" is already in your
+#14 4.352 node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+#14 4.352 
+#14 4.352 babel-preset-react-app is part of the create-react-app project, [1mwhich
+#14 4.352 is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+#14 4.352 ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+#14 4.352 your devDependencies to work around this error. This will make this message
+#14 4.352 go away.[0m
+#14 4.352   
+#14 5.812 Compiled successfully.
+#14 5.812 
+#14 5.812 File sizes after gzip:
+#14 5.812 
+#14 5.821   45.48 kB  build/static/js/main.7ac203c0.js
+#14 5.821   248 B     build/static/css/main.28c4dba2.css
+#14 5.821 
+#14 5.821 The project was built assuming it is hosted at /.
+#14 5.821 You can control this with the homepage field in your package.json.
+#14 5.821 
+#14 5.821 The build folder is ready to be deployed.
+#14 5.821 You may serve it with a static server:
+#14 5.821 
+#14 5.821   npm install -g serve
+#14 5.821   serve -s build
+#14 5.821 
+#14 5.821 Find out more about deployment here:
+#14 5.821 
+#14 5.821   https://cra.link/deployment
+#14 5.821 
+#14 DONE 5.9s
+
+#15 [stage-1 2/2] COPY --from=build /app/build /usr/share/nginx/html
+#15 DONE 0.0s
+
+#16 exporting to image
+#16 exporting layers 0.0s done
+#16 writing image sha256:14b5091ee952715c53e0464d6a45aa1a1091d3edef7b0da856fb86499c635a90 done
+#16 naming to docker.io/hikohitokiri/multistage_example_masterclass:v1 done
+#16 DONE 0.0s

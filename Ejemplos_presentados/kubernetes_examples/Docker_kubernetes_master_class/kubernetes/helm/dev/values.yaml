@@ -1,0 +1,76 @@
+app:
+  name: example-cikume-masterclass
+  suffix: dev
+  path: /
+  hosts: 
+    - example-cikume-masterclass.dev.local
+
+ingress:
+  enabled: true
+  annotations:
+    # nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.2 TLSv1.3"
+    # nginx.ingress.kubernetes.io/ssl-prefer-server-ciphers: "true"
+    # nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256"
+    # appgw.ingress.kubernetes.io/health-probe-status-codes: 200-399, 404
+    # cert-manager.io/cluster-issuer: letsencrypt-pro
+    # cert-manager.io/acme-challenge-type: http01
+    # appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  ingressClassName: "nginx"
+  # ingressClassName: "azure-application-gateway"
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2000Mi
+  requests:
+    cpu: 50m
+    memory: 4Mi
+
+
+database:
+  postgresUrl: "postgress sql connection string"
+
+adminSecret: lol
+
+configMapValues:
+  HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+  HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: "naming_convention"
+  HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: "graphql-default"
+  HASURA_GRAPHQL_LOG_LEVEL: "debug"
+  HASURA_GRAPHQL_ENABLED_LOG_TYPES: "http-log"
+  HASURA_GRAPHQL_PG_CONNECTIONS: "500"
+  HASURA_GRAPHQL_CORS_DOMAIN: "*"
+  HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "anonymous"
+
+HASURA_GRAPHQL_JWT_SECRET_URL: "https://auth.test.elecate.net/realms/staffing/protocol/openid-connect/certs"
+
+nodeSelector: {}
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+
+
+# tolerations:
+#   - key: CriticalAddonsOnly
+#     operator: Exists
+#     effect: NoSchedule

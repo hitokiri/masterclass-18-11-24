@@ -1,0 +1,25 @@
+# https://www.masterclass.org/server/containers
+# https://www.janua.fr/masterclass-x-and-kubernetes-how-to-deploy-a-cluster/
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: masterclass
+
+images:
+  - name: quay.io/masterclass/masterclass
+    newTag: 25.0.2
+
+replicas:
+  - name: masterclass
+    count: 3
+
+commonLabels:
+  app.kubernetes.io/environment: production
+
+resources:
+  - ../base
+
+  # Deploy resources related to the environment
+  - secrets
+  - configMap-configuration-parameters.yaml

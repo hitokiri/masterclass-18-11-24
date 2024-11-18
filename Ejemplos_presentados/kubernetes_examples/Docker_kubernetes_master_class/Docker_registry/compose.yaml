@@ -1,0 +1,16 @@
+
+services:
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"  # Mapea el puerto 5000 del contenedor al puerto 5000 del host
+    volumes:
+      - registry-data:/var/lib/registry  # Volumen persistente para almacenar imágenes
+      - ./certs:/certs  # Montar el directorio de certificados
+    environment:
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5000  # Escuchar en todas las interfaces
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt  # Ruta del certificado
+      REGISTRY_HTTP_TLS_KEY: /certs/registry.key  # Ruta de la clave
+
+volumes:
+  registry-data:  # Define el volumen persistente

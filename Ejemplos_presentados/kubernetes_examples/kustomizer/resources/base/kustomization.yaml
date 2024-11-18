@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: default
+
+commonLabels:
+  app.kubernetes.io/name: masterclass
+
+resources:
+  # Deploy the OIDC
+  - statefulSet-masterclass.yaml
+  - service-masterclass.yaml
+  - ingress-masterclass.yaml

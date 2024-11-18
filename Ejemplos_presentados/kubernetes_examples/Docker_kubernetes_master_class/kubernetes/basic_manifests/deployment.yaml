@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-deployment-nginx
+  namespace: test-masterclass
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: example-deployment-nginx
+  template:
+    metadata:
+      labels:
+        app: example-deployment-nginx
+    spec:
+      containers:
+      - name: example-deployment-nginx
+        image: nginx:1.14.2
+        resources:
+          requests:
+            memory: "5Mi"
+            cpu: "10m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        envFrom:
+          - secretRef:
+              name: example-deployment-nginx
+          - configMapRef:
+              name: example-deployment-nginx
